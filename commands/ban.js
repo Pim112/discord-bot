@@ -14,12 +14,12 @@ module.exports = {
     execute(interaction, client) {
         const member = interaction.options.getUser('user');
 
-        if (!member) {
-            return interaction.reply('You need to mention the member you want to ban him');
+        if (!interaction.member.permissions.has('BAN_MEMBERS')) {
+            return interaction.reply("You have no power here");
         }
 
-        if (!interaction.member.permissions.has('BAN_MEMBERS')) {
-            return interaction.reply("I can't ban this user.");
+        if (!member) {
+            return interaction.reply('You need to mention the member you want to ban him');
         }
 
         const userinfo = client.users.cache.getMember(member);

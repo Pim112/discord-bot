@@ -2,6 +2,8 @@ const {ApplicationCommandOptionType} = require('discord.js');
 const {useMainPlayer} = require('discord-player');
 const {isInVoiceChannel} = require('../utils/voicechannel');
 
+const { getData } = require('spotify-url-info')(require('node-fetch'));
+
 module.exports = {
     name: 'play',
     description: 'Play a song in your channel!',
@@ -24,7 +26,22 @@ module.exports = {
             await interaction.deferReply();
 
             const player = useMainPlayer();
-            const query = interaction.options.getString('query');
+            let query = interaction.options.getString('query');
+            
+            // const regex = /(?:https?:\/\/)?(?:w{3}\.)?\w*\.?spotify\.\w+\/\w+\/\w+/;
+            // const match = query.match(regex);
+            
+            // if (match) {
+            //     try {
+            //         const info = await getData(match[0]);
+            //         query = `${info.name} ${info.artists.map(a => a.name).join(', ')}`;
+            //     } catch(e) {
+            //         console.log(e)
+            //     }
+            // }
+
+            // console.log(query)
+
             const searchResult = await player.search(query);
             if (!searchResult.hasTracks()) return void interaction.followUp({content: 'No results were found!'});
 
@@ -39,7 +56,7 @@ module.exports = {
                             requestedBy: interaction.user.username,
                         },
                         leaveOnEmptyCooldown: 300000,
-                        leaveOnEmpty: true,
+                        leaveOnEmpty: false,
                         leaveOnEnd: false,
                         bufferingTimeout: 0,
                         volume: config.get('volume') || 10,
